@@ -13,7 +13,6 @@ type Game struct {
 
 func (g *Game) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		fmt.Println("oifejwofij")
 		g.player.y += 1
 	} else if ebiten.IsKeyPressed(ebiten.KeyK) {
 		g.player.y -= 1
@@ -46,7 +45,7 @@ func main() {
 	game.player = *player
 
 	ebiten.SetWindowSize(640, 480)
-	ebiten.SetWindowTitle("Hello, World!")
+	ebiten.SetWindowTitle("Melon Jam 25")
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
