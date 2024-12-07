@@ -12,15 +12,7 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
-	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		g.player.y += 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyK) {
-		g.player.y -= 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyL) {
-		g.player.x += 1
-	} else if ebiten.IsKeyPressed(ebiten.KeyH) {
-		g.player.x -= 1
-	}
+	handlePlayerInput(&g.player)
 	return nil
 }
 
