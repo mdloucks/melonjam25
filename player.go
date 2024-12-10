@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 
+	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -13,33 +14,46 @@ type Player struct {
 	*Entity
 }
 
-func newPlayer(spritePath string) (*Player, error) {
+func newPlayer(spritePath string, x float64, y float64) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
 
 	if err != nil {
-		fmt.Println("there was an error")
-		fmt.Printf("%s err ", err)
+		fmt.Printf("Could not create new player %s", err)
 		defaultImg := ebiten.NewImage(32, 32)
-		defaultImg.Fill(color.White)
-		return &Player{*defaultImg, &Entity{0, 0}}, nil
+		defaultImg.Fill(color.RGBA{G: 255, A: 255})
+		return &Player{*defaultImg, &Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}}}, nil
 	}
 
-	return &Player{*img, &Entity{0, 0}}, nil
+	bodyDef := box2d.MakeB2BodyDef()
+	bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
+	bodyDef.Position.Set(x, y) // Initial position
+	bodyDef.LinearDamping = 0.8
 
+	return &Player{
+		*img,
+		&Entity{
+			name:    "",
+			bodyDef: &bodyDef,
+			body:    nil,
+		},
+	}, nil
 }
 
-func handlePlayerInput(player *Player) {
+func handlePlayerInput(player *Player) box2d.B2Vec2 {
+	var force box2d.B2Vec2
+
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		player.y += 1
+		force.Y = 100.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyK) {
-		player.y -= 1
+		force.Y = -100.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		player.x += 1
+		force.X = 100.0
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyH) {
-		player.x -= 1
+		force.X = -100.0
 	}
+	return force
 }
