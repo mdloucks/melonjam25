@@ -15,6 +15,8 @@ const (
 	timeStep           = 1.0 / 60.0
 	velocityIterations = 6
 	positionIterations = 2
+	gravity            = -10.0
+	groundScale        = 50.0
 )
 
 type Game struct {
@@ -42,7 +44,7 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, image *ebiten.I
 }
 
 func CreateWorld() box2d.B2World {
-	gravity := box2d.MakeB2Vec2(0.0, 0.0)
+	gravity := box2d.MakeB2Vec2(0.0, gravity)
 	world := box2d.MakeB2World(gravity)
 
 	return world
@@ -93,12 +95,26 @@ func (g *Game) Update() error {
 	g.player.body.SetLinearVelocity(force)
 	g.player2.body.SetLinearVelocity(force)
 
-	g.world.Step(timeStep, velocityIterations, positionIterations)
-
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
 		g.player.tryJump()
 	}
+
+	g.world.Step(timeStep, velocityIterations, positionIterations)
+
 	return nil
+}
+
+func DrawGround(screen *ebiten.Image) {
+	// Ground
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Invert()
+
+	// Draw the ground (simple rectangle)
+	groundImage := ebiten.NewImage(int(screenWidth), int(-groundScale))
+	groundImage.Fill(color.RGBA{255, 100, 100, 255})
+	screen.DrawImage(groundImage, op)
+
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
