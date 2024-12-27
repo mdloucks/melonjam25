@@ -14,13 +14,18 @@ type Player struct {
 	*Entity
 }
 
-func newPlayer(spritePath string, x float64, y float64) (*Player, error) {
+const (
+	unit    = 16
+	groundY = 380
+)
+
+func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
 
 	if err != nil {
 		fmt.Printf("Could not create new player %s", err)
-		defaultImg := ebiten.NewImage(32, 32)
+		defaultImg := ebiten.NewImage(96, 96)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
 		return &Player{*defaultImg, &Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}}}, nil
 	}
@@ -33,14 +38,14 @@ func newPlayer(spritePath string, x float64, y float64) (*Player, error) {
 	return &Player{
 		*img,
 		&Entity{
-			name:    "",
+			name:    name,
 			bodyDef: &bodyDef,
 			body:    nil,
 		},
 	}, nil
 }
 
-func handlePlayerInput(player *Player) box2d.B2Vec2 {
+func HandlePlayerInput() box2d.B2Vec2 {
 	var force box2d.B2Vec2
 
 	if ebiten.IsKeyPressed(ebiten.KeyJ) {
@@ -56,4 +61,14 @@ func handlePlayerInput(player *Player) box2d.B2Vec2 {
 		force.X = -100.0
 	}
 	return force
+}
+
+const (
+	jumpHeight = 50
+)
+
+func (p *Player) tryJump() {
+	jumpForce := box2d.MakeB2Vec2(0, jumpHeight)
+	p.Entity.body.ApplyLinearImpulseToCenter(jumpForce, true)
+
 }
