@@ -7,6 +7,7 @@ import (
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const (
@@ -15,8 +16,8 @@ const (
 	timeStep           = 1.0 / 60.0
 	velocityIterations = 6
 	positionIterations = 2
-	gravity            = -10.0
-	groundScale        = 50.0
+	gravity            = 10.0
+	pixlesPerMeter     = 50
 )
 
 type Game struct {
@@ -72,11 +73,12 @@ func NewGame() *Game {
 
 	// Attach a shape to the player body
 	shape := box2d.MakeB2PolygonShape()
-	shape.SetAsBox(12, 12) // A box with width=2 and height=2
+	shape.SetAsBox(0.5, 0.5) // A box with width=2 and height=2
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
 	fixtureDef.Density = 1.0
 	fixtureDef.Friction = 0.3
+	fixtureDef.Restitution = 0.0
 	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
 
 	return &Game{
@@ -95,26 +97,13 @@ func (g *Game) Update() error {
 	g.player.body.SetLinearVelocity(force)
 	g.player2.body.SetLinearVelocity(force)
 
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.player.tryJump()
 	}
 
 	g.world.Step(timeStep, velocityIterations, positionIterations)
 
 	return nil
-}
-
-func DrawGround(screen *ebiten.Image) {
-	// Ground
-
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Invert()
-
-	// Draw the ground (simple rectangle)
-	groundImage := ebiten.NewImage(int(screenWidth), int(-groundScale))
-	groundImage.Fill(color.RGBA{255, 100, 100, 255})
-	screen.DrawImage(groundImage, op)
-
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
