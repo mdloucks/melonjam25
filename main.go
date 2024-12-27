@@ -95,11 +95,12 @@ func (g *Game) Update() error {
 	g.player.body.SetLinearVelocity(force)
 	g.player2.body.SetLinearVelocity(force)
 
-	g.world.Step(timeStep, velocityIterations, positionIterations)
-
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
 		g.player.tryJump()
 	}
+
+	g.world.Step(timeStep, velocityIterations, positionIterations)
+
 	return nil
 }
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	//"math"
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -67,6 +68,10 @@ const (
 )
 
 func (p *Player) tryJump() {
+	//velocity := p.body.GetLinearVelocity()
+	//if math.Abs(velocity.Y) < 0.01 { // ground check
+
+	//}
 	jumpForce := box2d.MakeB2Vec2(0, jumpHeight)
 	p.Entity.body.ApplyLinearImpulseToCenter(jumpForce, true)
 
