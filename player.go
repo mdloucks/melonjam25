@@ -24,7 +24,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 
 	if err != nil {
 		fmt.Printf("Could not create new player %s", err)
-		defaultImg := ebiten.NewImage(96, 96)
+		defaultImg := ebiten.NewImage(192, 192)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
 		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}}, nil
 	}

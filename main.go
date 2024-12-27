@@ -70,7 +70,7 @@ func NewGame() *Game {
 
 	// Attach a shape to the player body
 	shape := box2d.MakeB2PolygonShape()
-	shape.SetAsBox(1.0, 1.0) // A box with width=2 and height=2
+	shape.SetAsBox(12, 12) // A box with width=2 and height=2
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
 	fixtureDef.Density = 1.0
@@ -134,7 +134,7 @@ func main() {
 	game := NewGame()
 
 	// Create the ground body
-	x, y, w, h := 100.0, 100.0, 300.0, 30.0
+	x, y, w, h := 0.0, 400.0, 800.0, 30.0
 	groundDef := box2d.MakeB2BodyDef()
 	groundDef.Position.Set(x, y)
 	groundImage := ebiten.NewImage(int(w), int(h))
@@ -143,6 +143,7 @@ func main() {
 	groundBody.SetType(box2d.B2BodyType.B2_staticBody)
 
 	groundShape := box2d.MakeB2PolygonShape()
+
 	vertices := []box2d.B2Vec2{
 		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
 		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
