@@ -10,7 +10,6 @@ import (
 )
 
 type Player struct {
-	sprite ebiten.Image
 	*Entity
 }
 
@@ -27,7 +26,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 		fmt.Printf("Could not create new player %s", err)
 		defaultImg := ebiten.NewImage(96, 96)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
-		return &Player{*defaultImg, &Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}}}, nil
+		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}}, nil
 	}
 
 	bodyDef := box2d.MakeB2BodyDef()
@@ -36,11 +35,11 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 	bodyDef.LinearDamping = 0.8
 
 	return &Player{
-		*img,
 		&Entity{
 			name:    name,
 			bodyDef: &bodyDef,
 			body:    nil,
+			sprite:  *img,
 		},
 	}, nil
 }
