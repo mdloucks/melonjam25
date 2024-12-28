@@ -56,9 +56,9 @@ func NewGame() *Game {
 
 	game.entities = append(game.entities, entities...)
 
-	player, err := NewPlayer("assets/img/player.png", 100, 350, "dark", true)
+	player, err := NewPlayer("assets/img/GreenMan.png", 100, 300, "dark", true)
 
-	player2, err2 := NewPlayer("assets/img/player.png", 100, 150, "light", false)
+	player2, err2 := NewPlayer("assets/img/GreenMan.png", 100, 150, "light", false)
 
 	if err != nil || err2 != nil {
 		fmt.Println("Could not create player!")
@@ -76,7 +76,7 @@ func NewGame() *Game {
 	shape := box2d.MakeB2PolygonShape()
 	shape.SetAsBox(0.5, 0.5) // A box with width=2 and height=2
 
-	w, h := 16.0, 16.0
+	w, h := 64.0, 64.0
 	vertices := []box2d.B2Vec2{
 		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
 		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
@@ -88,7 +88,7 @@ func NewGame() *Game {
 
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
-	fixtureDef.Density = 1.0
+	fixtureDef.Density = 0.1
 	fixtureDef.Friction = 0.3
 	fixtureDef.Restitution = 0.0
 	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
