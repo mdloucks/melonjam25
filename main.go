@@ -27,9 +27,10 @@ type Game struct {
 	*Map
 }
 
-func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, image *ebiten.Image) (bod *box2d.B2Body) {
+func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, shape *box2d.B2PolygonShape, image *ebiten.Image) (bod *box2d.B2Body) {
 
 	bod = g.world.CreateBody(bodyDef)
+	bod.CreateFixture(shape, 0.0)
 
 	entity := Entity{
 		name:    "Ground",
@@ -43,16 +44,12 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, image *ebiten.I
 	return bod
 }
 
-func CreateWorld() box2d.B2World {
-	gravity := box2d.MakeB2Vec2(0.0, gravity)
-	world := box2d.MakeB2World(gravity)
-
-	return world
-}
-
 func NewGame() *Game {
-	// Create the Box2D world with gravity
-	world := CreateWorld()
+	game := Game{}
+	world, entities := CreateWorld()
+	game.world = &world
+
+	game.entities = append(game.entities, entities...)
 
 	player, err := NewPlayer("assets/img/player.png", 100, 100, "dark")
 
@@ -79,11 +76,15 @@ func NewGame() *Game {
 	fixtureDef.Friction = 0.3
 	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
 
-	return &Game{
-		world:   &world,
-		player:  player,
-		player2: player2,
-	}
+	game.player = player
+	game.player2 = player2
+
+	return &game
+	// return &Game{
+	// 	world:   &world,
+	// 	player:  player,
+	// 	player2: player2,
+	// }
 }
 
 func (g *Game) Update() error {
@@ -149,31 +150,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 func main() {
 	game := NewGame()
 
-	// Create the ground body
-	x, y, w, h := 0.0, 400.0, 800.0, 30.0
-	groundDef := box2d.MakeB2BodyDef()
-	groundDef.Position.Set(x, y)
-	groundImage := ebiten.NewImage(int(w), int(h))
-	groundImage.Fill(color.CMYK{100, 200, 30, 1})
-	groundBody := game.makeEntity("Ground", &groundDef, groundImage)
-	groundBody.SetType(box2d.B2BodyType.B2_staticBody)
-
-	groundShape := box2d.MakeB2PolygonShape()
-
-	vertices := []box2d.B2Vec2{
-		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, h), // top-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(0, h), // top-left corner (relative to the body's position)
-
-	}
-	groundShape.Set(vertices, len(vertices))
-	groundBody.CreateFixture(&groundShape, 0.0)
-
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Fixed Box2D and Ebiten Example")
 
 	// LoadTilesetImage()
+	CreateWorld()
 
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)

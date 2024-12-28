@@ -48,16 +48,16 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 func HandlePlayerInput() box2d.B2Vec2 {
 	var force box2d.B2Vec2
 
-	if ebiten.IsKeyPressed(ebiten.KeyJ) {
+	if ebiten.IsKeyPressed(ebiten.KeyS) {
 		force.Y = 100.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyK) {
+	if ebiten.IsKeyPressed(ebiten.KeyW) {
 		force.Y = -100.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyL) {
+	if ebiten.IsKeyPressed(ebiten.KeyD) {
 		force.X = 100.0
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyH) {
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
 		force.X = -100.0
 	}
 	return force
