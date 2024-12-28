@@ -108,7 +108,7 @@ func (g *Game) Update() error {
 	} else {
 		HandleInput(g.player2)
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeyS) {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.player.swap()
 		g.player2.swap()
 	}

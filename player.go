@@ -22,6 +22,9 @@ const (
 	jumpHeight   = -50000
 	playerWidth  = 16
 	playerHeight = 16
+	maxSpeed     = 20.0
+	maxJump      = 100.0
+	moveForce    = 50.0
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
@@ -99,15 +102,34 @@ func PlayerFixture() *box2d.B2FixtureDef {
 }
 
 func HandleInput(p *Player) {
-	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		force := box2d.MakeB2Vec2(moveSpeed, 0)
-		p.body.ApplyLinearImpulseToCenter(force, true)
+	currentVelocity := p.body.GetLinearVelocity()
+	l, r := ebiten.IsKeyPressed(ebiten.KeyA), ebiten.IsKeyPressed(ebiten.KeyD)
+	force := box2d.MakeB2Vec2(0, 0)
+
+	if l && !r {
+		force.X = -moveForce
+	} else if !l && r {
+		force.X = moveForce
+	} else if l && r {
+		p.body.SetLinearVelocity(box2d.MakeB2Vec2(0, currentVelocity.Y))
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyH) {
-		force := box2d.MakeB2Vec2(-moveSpeed, 0)
-		p.body.ApplyLinearImpulseToCenter(force, true)
+	// Max Speed
+	if math.Abs(currentVelocity.X) > maxSpeed {
+		currentVelocity.X = math.Copysign(maxSpeed, currentVelocity.X)
+		p.body.SetLinearVelocity(box2d.MakeB2Vec2(currentVelocity.X, currentVelocity.Y))
 	}
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	// Max Jump, !take Abs val because fast falling is cool
+	if currentVelocity.Y > maxJump {
+		currentVelocity.Y = math.Copysign(maxSpeed, currentVelocity.Y)
+		p.body.SetLinearVelocity(box2d.MakeB2Vec2(currentVelocity.X, currentVelocity.Y))
+	}
+	p.body.ApplyLinearImpulseToCenter(force, true)
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyW) {
 		p.tryJump()
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyS) {
+		p.body.ApplyLinearImpulseToCenter(box2d.MakeB2Vec2(0, gravity*5), true)
 	}
 }
