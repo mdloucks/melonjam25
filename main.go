@@ -28,6 +28,13 @@ type Game struct {
 	entities     []Entity
 	tilemapJson  TilemapJSON
 	tilemapImage *ebiten.Image
+	cam          Camera
+}
+
+type Camera struct {
+	zoom float64
+	x    int
+	y    int
 }
 
 func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, fixtureDef *box2d.B2FixtureDef, image *ebiten.Image) (bod *box2d.B2Body) {
@@ -78,10 +85,21 @@ func NewGame() *Game {
 	createMap(0, 0, &game, &world)
 	createMap(0, 200, &game, &world)
 
+	cam := Camera{
+		x:    int(player.body.GetPosition().X),
+		y:    0,
+		zoom: 1,
+	}
+
+	game.cam = cam
+
 	return &game
 }
 
 func (g *Game) Update() error {
+	g.cam.x = int(g.player.body.GetPosition().X - (screenWidth / 2))
+	// g.cam.y = int(g.player.body.GetPosition().Y - screenHeight/2)
+
 	if g.player == nil || g.player2 == nil {
 		log.Fatal(nil)
 	}
@@ -106,19 +124,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	op := ebiten.DrawImageOptions{}
 
-	RenderMap(0, 0, screen, g, &op)
-	RenderMap(0, 200, screen, g, &op)
+	RenderMap(0, 0, screen, g, &op, &g.cam)
+	RenderMap(0, 200, screen, g, &op, &g.cam)
 
 	op.GeoM.Reset()
-	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op, &g.cam)
 
 	op.GeoM.Reset()
-	RenderSizedEntity(playerWidth, playerHeight, screen, g.player2.Entity, &op)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player2.Entity, &op, &g.cam)
 
 	op.GeoM.Reset()
 
 	for _, element := range g.entities {
-		RenderEntity(screen, &element, &op)
+		RenderEntity(screen, &element, &op, &g.cam)
 		op.GeoM.Reset()
 	}
 }
