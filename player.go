@@ -13,9 +13,10 @@ import (
 
 type Player struct {
 	*Entity
-	isGrounded bool
-	isActive   bool
-	fixture    box2d.B2FixtureDef
+	isGrounded    bool
+	isActive      bool
+	fixture       box2d.B2FixtureDef
+	hasDoubleJump bool
 }
 
 const (
@@ -33,9 +34,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string, active bool
 
 	if err != nil {
 		fmt.Printf("Could not create new player %s", err)
-		defaultImg := ebiten.NewImage(playerWidth, playerHeight)
-		defaultImg.Fill(color.RGBA{G: 255, A: 255})
-		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}, false, false, *PlayerFixture()}, nil
+		return DefaultPlayer(), nil
 	}
 
 	bodyDef := box2d.MakeB2BodyDef()
@@ -53,8 +52,10 @@ func NewPlayer(spritePath string, x float64, y float64, name string, active bool
 		false,
 		active,
 		*PlayerFixture(),
+		false,
 	}, nil
 }
+
 func (p *Player) swap() {
 	p.isActive = !p.isActive
 
@@ -70,12 +71,20 @@ func (p *Player) swap() {
 func (p *Player) tryJump() {
 	velocity := p.body.GetLinearVelocity()
 	if math.Abs(velocity.Y) < 0.01 { // ground check
-		jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
-		p.Entity.body.ApplyForceToCenter(jumpForce, true)
+		p.jump()
 		p.isGrounded = false
-	} else {
+		p.hasDoubleJump = true
+	} else if p.hasDoubleJump {
+		p.jump()
+		p.hasDoubleJump = false
+	} else { // restore jumpability
 		p.isGrounded = true
 	}
+
+}
+func (p *Player) jump() {
+	jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
+	p.Entity.body.ApplyForceToCenter(jumpForce, true)
 
 }
 
@@ -132,4 +141,18 @@ func HandleInput(p *Player) {
 	if ebiten.IsKeyPressed(ebiten.KeyS) {
 		p.body.ApplyLinearImpulseToCenter(box2d.MakeB2Vec2(0, gravity*5), true)
 	}
+}
+
+func DefaultPlayer() *Player {
+	defaultImg := ebiten.NewImage(playerWidth, playerHeight)
+	defaultImg.Fill(color.RGBA{G: 255, A: 255})
+
+	return &Player{
+		&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg},
+		false,
+		false,
+		*PlayerFixture(),
+		true,
+	}
+
 }
