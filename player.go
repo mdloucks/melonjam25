@@ -12,6 +12,7 @@ import (
 
 type Player struct {
 	*Entity
+	isGrounded bool
 }
 
 const (
@@ -28,7 +29,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 		fmt.Printf("Could not create new player %s", err)
 		defaultImg := ebiten.NewImage(192, 192)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
-		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}}, nil
+		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}, false}, nil
 	}
 
 	bodyDef := box2d.MakeB2BodyDef()
@@ -43,6 +44,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 			body:    nil,
 			sprite:  *img,
 		},
+		false,
 	}, nil
 }
 
@@ -51,7 +53,9 @@ func (p *Player) tryJump() {
 	if math.Abs(velocity.Y) < 0.01 { // ground check
 		jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
 		p.Entity.body.ApplyForceToCenter(jumpForce, true)
-
+		p.isGrounded = false
+	} else {
+		p.isGrounded = true
 	}
 
 }

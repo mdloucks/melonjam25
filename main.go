@@ -62,6 +62,7 @@ func NewGame() *Game {
 	}
 
 	// Create the player body
+	player.bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
 	playerBody := world.CreateBody(player.bodyDef)
 	player.body = playerBody
 
@@ -100,13 +101,12 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	var force box2d.B2Vec2
 	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		force.X = moveSpeed
+		force := box2d.MakeB2Vec2(moveSpeed, 0)
 		g.player.body.ApplyLinearImpulseToCenter(force, true)
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyH) {
-		force.X = -moveSpeed
+		force := box2d.MakeB2Vec2(-moveSpeed, 0)
 		g.player.body.ApplyLinearImpulseToCenter(force, true)
 	}
 
