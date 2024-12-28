@@ -46,24 +46,6 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 	}, nil
 }
 
-func HandlePlayerInput() box2d.B2Vec2 {
-	var force box2d.B2Vec2
-
-	if ebiten.IsKeyPressed(ebiten.KeyJ) {
-		force.Y = 100.0 * pixlesPerMeter
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyK) {
-		force.Y = -100.0 * pixlesPerMeter
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		force.X = 100.0 * pixlesPerMeter
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyH) {
-		force.X = -100.0 * pixlesPerMeter
-	}
-	return force
-}
-
 func (p *Player) tryJump() {
 	//velocity := p.body.GetLinearVelocity()
 	//if math.Abs(velocity.Y) < 0.01 { // ground check

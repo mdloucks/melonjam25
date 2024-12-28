@@ -17,6 +17,7 @@ const (
 	positionIterations = 2
 	gravity            = 80.0
 	pixlesPerMeter     = 50
+	moveSpeed          = 100 * pixlesPerMeter
 )
 
 type Game struct {
@@ -98,10 +99,16 @@ func (g *Game) Update() error {
 	if g.player == nil {
 		return nil
 	}
-	// force := HandlePlayerInput()
 
-	// g.player.body.SetLinearVelocity(force)
-	// g.player2.body.SetLinearVelocity(force)
+	var force box2d.B2Vec2
+	if ebiten.IsKeyPressed(ebiten.KeyL) {
+		force.X = moveSpeed
+		g.player.body.ApplyLinearImpulseToCenter(force, true)
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyH) {
+		force.X = -moveSpeed
+		g.player.body.ApplyLinearImpulseToCenter(force, true)
+	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.player.tryJump()
