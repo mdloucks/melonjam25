@@ -15,8 +15,9 @@ type Player struct {
 }
 
 const (
-	unit    = 16
-	groundY = 380
+	unit       = 16
+	groundY    = 380
+	jumpHeight = -5
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, error) {
@@ -48,31 +49,27 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 func HandlePlayerInput() box2d.B2Vec2 {
 	var force box2d.B2Vec2
 
-	if ebiten.IsKeyPressed(ebiten.KeyS) {
-		force.Y = 100.0
+	if ebiten.IsKeyPressed(ebiten.KeyJ) {
+		force.Y = 100.0 * pixlesPerMeter
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyW) {
-		force.Y = -100.0
+	if ebiten.IsKeyPressed(ebiten.KeyK) {
+		force.Y = -100.0 * pixlesPerMeter
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyD) {
-		force.X = 100.0
+	if ebiten.IsKeyPressed(ebiten.KeyL) {
+		force.X = 100.0 * pixlesPerMeter
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyA) {
-		force.X = -100.0
+	if ebiten.IsKeyPressed(ebiten.KeyH) {
+		force.X = -100.0 * pixlesPerMeter
 	}
 	return force
 }
-
-const (
-	jumpHeight = 50
-)
 
 func (p *Player) tryJump() {
 	//velocity := p.body.GetLinearVelocity()
 	//if math.Abs(velocity.Y) < 0.01 { // ground check
 
 	//}
-	jumpForce := box2d.MakeB2Vec2(0, jumpHeight)
+	jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
 	p.Entity.body.ApplyLinearImpulseToCenter(jumpForce, true)
 
 }
