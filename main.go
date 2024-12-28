@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"log"
 
@@ -66,7 +65,6 @@ func NewGame() *Game {
 
 	// Create the player body
 	player.body = world.CreateBody(player.bodyDef)
-
 	player2.body = world.CreateBody(player2.bodyDef)
 
 	// player fixture
@@ -107,52 +105,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	op := ebiten.DrawImageOptions{}
 
-	for _, layer := range g.tilemapJson.Layers {
-
-		for index, id := range layer.Data {
-
-			x := index % layer.Width
-			y := index / layer.Width
-
-			x *= 16
-			y *= 16
-
-			srcX := (id - 1) % 22
-			srcY := (id - 1) / 22
-
-			srcX *= 16
-			srcY *= 16
-
-			op.GeoM.Translate(float64(x), float64(y))
-
-			screen.DrawImage(
-				g.tilemapImage.SubImage(image.Rect(srcX, srcY, srcX+16, srcY+16)).(*ebiten.Image),
-				&op,
-			)
-
-			op.GeoM.Reset()
-		}
-	}
+	RenderMap(screen, g, &op)
 
 	op.GeoM.Reset()
-
-	pos := g.player.body.GetPosition()
-	op.GeoM.Translate(pos.X, pos.Y)
-	screen.DrawImage(&g.player.sprite, &op)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op)
 
 	op.GeoM.Reset()
-	pos2 := g.player2.body.GetPosition()
-	op.GeoM.Translate(pos2.X, pos2.Y)
-	screen.DrawImage(&g.player2.sprite, &op)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player2.Entity, &op)
+
+	op.GeoM.Reset()
 
 	for _, element := range g.entities {
-
-		spriteOp := ebiten.DrawImageOptions{}
-
-		pos = element.body.GetPosition()
-		spriteOp.GeoM.Translate(pos.X, pos.Y)
-		screen.DrawImage(&element.sprite, &spriteOp)
-
+		RenderEntity(screen, &element, &op)
+		op.GeoM.Reset()
 	}
 }
 

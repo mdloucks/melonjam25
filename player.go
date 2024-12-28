@@ -19,9 +19,9 @@ type Player struct {
 }
 
 const (
-	unit       = 16
-	groundY    = 380
-	jumpHeight = -50000
+	jumpHeight   = -50000
+	playerWidth  = 16
+	playerHeight = 16
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
@@ -30,7 +30,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string, active bool
 
 	if err != nil {
 		fmt.Printf("Could not create new player %s", err)
-		defaultImg := ebiten.NewImage(192, 192)
+		defaultImg := ebiten.NewImage(playerWidth, playerHeight)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
 		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}, false, false, *PlayerFixture()}, nil
 	}
@@ -77,11 +77,9 @@ func (p *Player) tryJump() {
 }
 
 func PlayerFixture() *box2d.B2FixtureDef {
-	// Attach a shape to the player body
 	shape := box2d.MakeB2PolygonShape()
-	shape.SetAsBox(0.5, 0.5) // A box with width=2 and height=2
 
-	w, h := 64.0, 64.0
+	w, h := 16.0, 16.0
 	vertices := []box2d.B2Vec2{
 		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
 		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
