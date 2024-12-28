@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
-	//"math"
+	"math"
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -47,11 +47,11 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 }
 
 func (p *Player) tryJump() {
-	//velocity := p.body.GetLinearVelocity()
-	//if math.Abs(velocity.Y) < 0.01 { // ground check
+	velocity := p.body.GetLinearVelocity()
+	if math.Abs(velocity.Y) < 0.01 { // ground check
+		jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
+		p.Entity.body.ApplyForceToCenter(jumpForce, true)
 
-	//}
-	jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
-	p.Entity.body.ApplyForceToCenter(jumpForce, true)
+	}
 
 }
