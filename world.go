@@ -33,7 +33,6 @@ func createGround(world *box2d.B2World) Entity {
 		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
 		box2d.MakeB2Vec2(w, h), // top-right corner (relative to the body's position)
 		box2d.MakeB2Vec2(0, h), // top-left corner (relative to the body's position)
-
 	}
 
 	groundShape.Set(vertices, len(vertices))

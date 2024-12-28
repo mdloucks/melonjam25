@@ -17,7 +17,7 @@ type Player struct {
 const (
 	unit       = 16
 	groundY    = 380
-	jumpHeight = -50
+	jumpHeight = -50000
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, error) {

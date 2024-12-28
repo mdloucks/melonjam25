@@ -6,6 +6,7 @@ import (
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 	timeStep           = 1.0 / 60.0
 	velocityIterations = 6
 	positionIterations = 2
-	gravity            = 30.0
+	gravity            = 80.0
 	pixlesPerMeter     = 50
 )
 
@@ -50,9 +51,9 @@ func NewGame() *Game {
 
 	game.entities = append(game.entities, entities...)
 
-	player, err := NewPlayer("assets/img/player.png", 100, 100, "dark")
+	player, err := NewPlayer("assets/img/player.png", 100, 350, "dark")
 
-	player2, err2 := NewPlayer("assets/img/player.png", 100, 150, "light")
+	player2, err2 := NewPlayer("assets/img/player.png", 100, 450, "light")
 
 	if err != nil || err2 != nil {
 		fmt.Println("Could not create player!")
@@ -69,6 +70,17 @@ func NewGame() *Game {
 	// Attach a shape to the player body
 	shape := box2d.MakeB2PolygonShape()
 	shape.SetAsBox(0.5, 0.5) // A box with width=2 and height=2
+
+	w, h := 16.0, 16.0
+	vertices := []box2d.B2Vec2{
+		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
+		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
+		box2d.MakeB2Vec2(w, h), // top-right corner (relative to the body's position)
+		box2d.MakeB2Vec2(0, h), // top-left corner (relative to the body's position)
+	}
+
+	shape.Set(vertices, len(vertices))
+
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
 	fixtureDef.Density = 1.0
@@ -91,7 +103,7 @@ func (g *Game) Update() error {
 	// g.player.body.SetLinearVelocity(force)
 	// g.player2.body.SetLinearVelocity(force)
 
-	if ebiten.IsKeyPressed(ebiten.KeySpace) {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.player.tryJump()
 	}
 
