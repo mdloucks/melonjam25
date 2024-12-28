@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 	"log"
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const (
@@ -16,7 +14,7 @@ const (
 	timeStep           = 1.0 / 60.0
 	velocityIterations = 6
 	positionIterations = 2
-	gravity            = 10.0
+	gravity            = 30.0
 	pixlesPerMeter     = 50
 )
 
@@ -82,23 +80,18 @@ func NewGame() *Game {
 	game.player2 = player2
 
 	return &game
-	// return &Game{
-	// 	world:   &world,
-	// 	player:  player,
-	// 	player2: player2,
-	// }
 }
 
 func (g *Game) Update() error {
 	if g.player == nil {
 		return nil
 	}
-	force := HandlePlayerInput()
+	// force := HandlePlayerInput()
 
-	g.player.body.SetLinearVelocity(force)
-	g.player2.body.SetLinearVelocity(force)
+	// g.player.body.SetLinearVelocity(force)
+	// g.player2.body.SetLinearVelocity(force)
 
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+	if ebiten.IsKeyPressed(ebiten.KeySpace) {
 		g.player.tryJump()
 	}
 
@@ -140,7 +133,7 @@ func main() {
 	game := NewGame()
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
-	ebiten.SetWindowTitle("Fixed Box2D and Ebiten Example")
+	ebiten.SetWindowTitle("BOX2D SUCKS")
 
 	// LoadTilesetImage()
 	CreateWorld()

@@ -17,7 +17,7 @@ type Player struct {
 const (
 	unit       = 16
 	groundY    = 380
-	jumpHeight = -5
+	jumpHeight = -50
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, error) {
@@ -70,6 +70,6 @@ func (p *Player) tryJump() {
 
 	//}
 	jumpForce := box2d.MakeB2Vec2(0, jumpHeight*pixlesPerMeter)
-	p.Entity.body.ApplyLinearImpulseToCenter(jumpForce, true)
+	p.Entity.body.ApplyForceToCenter(jumpForce, true)
 
 }
