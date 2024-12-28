@@ -66,16 +66,14 @@ func NewGame() *Game {
 	}
 
 	// Create the player body
-	playerBody := world.CreateBody(player.bodyDef)
-	player.body = playerBody
+	player.body = world.CreateBody(player.bodyDef)
 
-	player2Body := world.CreateBody(player2.bodyDef)
-	player2.body = player2Body
+	player2.body = world.CreateBody(player2.bodyDef)
 
 	// player fixture
 
-	playerBody.CreateFixtureFromDef(PlayerFixture()) // Create player
-	player2Body.CreateFixtureFromDef(PlayerFixture())
+	player.body.CreateFixtureFromDef(PlayerFixture()) // Create player
+	player2.body.CreateFixtureFromDef(PlayerFixture())
 
 	tilemapJson, err := NewTilemapJSON("assets/level1tilemap.tmj")
 	game.tilemapJson = *tilemapJson
