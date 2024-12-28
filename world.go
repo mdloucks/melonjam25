@@ -13,15 +13,15 @@ func CreateWorld() (box2d.B2World, []Entity) {
 	world := box2d.MakeB2World(gravity)
 
 	var entities []Entity
-	entities = append(entities, createGround(&world))
+	entities = append(entities, createGround(&world, 0.0, 400.0), createGround(&world, 0.0, 200.0))
 
 	return world, entities
 }
 
-func createGround(world *box2d.B2World) Entity {
+func createGround(world *box2d.B2World, x, y float64) Entity {
 
 	// Create the ground body
-	x, y, w, h := 0.0, 400.0, 800.0, 30.0
+	w, h := 800.0, 30.0
 	groundDef := box2d.MakeB2BodyDef()
 	groundDef.Position.Set(x, y)
 	groundImage := ebiten.NewImage(int(w), int(h))

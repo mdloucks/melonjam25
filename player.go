@@ -8,11 +8,13 @@ import (
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Player struct {
 	*Entity
 	isGrounded bool
+	active     bool
 }
 
 const (
@@ -21,7 +23,7 @@ const (
 	jumpHeight = -50000
 )
 
-func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, error) {
+func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
 
@@ -29,7 +31,7 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 		fmt.Printf("Could not create new player %s", err)
 		defaultImg := ebiten.NewImage(192, 192)
 		defaultImg.Fill(color.RGBA{G: 255, A: 255})
-		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}, false}, nil
+		return &Player{&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg}, false, false}, nil
 	}
 
 	bodyDef := box2d.MakeB2BodyDef()
@@ -45,9 +47,12 @@ func NewPlayer(spritePath string, x float64, y float64, name string) (*Player, e
 			sprite:  *img,
 		},
 		false,
+		active,
 	}, nil
 }
-
+func (p *Player) swap() {
+	p.active = !p.active
+}
 func (p *Player) tryJump() {
 	velocity := p.body.GetLinearVelocity()
 	if math.Abs(velocity.Y) < 0.01 { // ground check
@@ -58,4 +63,18 @@ func (p *Player) tryJump() {
 		p.isGrounded = true
 	}
 
+}
+
+func HandleInput(p *Player) {
+	if ebiten.IsKeyPressed(ebiten.KeyL) {
+		force := box2d.MakeB2Vec2(moveSpeed, 0)
+		p.body.ApplyLinearImpulseToCenter(force, true)
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyH) {
+		force := box2d.MakeB2Vec2(-moveSpeed, 0)
+		p.body.ApplyLinearImpulseToCenter(force, true)
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		p.tryJump()
+	}
 }

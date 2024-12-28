@@ -56,9 +56,9 @@ func NewGame() *Game {
 
 	game.entities = append(game.entities, entities...)
 
-	player, err := NewPlayer("assets/img/player.png", 100, 350, "dark")
+	player, err := NewPlayer("assets/img/player.png", 100, 350, "dark", true)
 
-	player2, err2 := NewPlayer("assets/img/player.png", 100, 450, "light")
+	player2, err2 := NewPlayer("assets/img/player.png", 100, 150, "light", false)
 
 	if err != nil || err2 != nil {
 		fmt.Println("Could not create player!")
@@ -66,7 +66,6 @@ func NewGame() *Game {
 	}
 
 	// Create the player body
-	player.bodyDef.Type = box2d.B2BodyType.B2_dynamicBody
 	playerBody := world.CreateBody(player.bodyDef)
 	player.body = playerBody
 
@@ -114,21 +113,17 @@ func NewGame() *Game {
 }
 
 func (g *Game) Update() error {
-	if g.player == nil {
-		return nil
+	if g.player == nil || g.player2 == nil {
+		log.Fatal(nil)
 	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyL) {
-		force := box2d.MakeB2Vec2(moveSpeed, 0)
-		g.player.body.ApplyLinearImpulseToCenter(force, true)
+	if g.player.active {
+		HandleInput(g.player)
+	} else {
+		HandleInput(g.player2)
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyH) {
-		force := box2d.MakeB2Vec2(-moveSpeed, 0)
-		g.player.body.ApplyLinearImpulseToCenter(force, true)
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		g.player.tryJump()
+	if inpututil.IsKeyJustPressed(ebiten.KeyS) {
+		g.player.swap()
+		g.player2.swap()
 	}
 
 	g.world.Step(timeStep, velocityIterations, positionIterations)
