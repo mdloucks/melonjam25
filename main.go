@@ -34,7 +34,7 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, shape *box2d.B2
 	bod.CreateFixture(shape, 0.0)
 
 	entity := Entity{
-		name:    "Ground",
+		name:    name,
 		bodyDef: bodyDef,
 		body:    bod,
 		sprite:  *image,
