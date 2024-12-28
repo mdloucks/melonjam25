@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/color"
 	"log"
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -21,11 +24,12 @@ const (
 )
 
 type Game struct {
-	world    *box2d.B2World
-	player   *Player
-	player2  *Player
-	entities []Entity
-	*Map
+	world        *box2d.B2World
+	player       *Player
+	player2      *Player
+	entities     []Entity
+	tilemapJson  TilemapJSON
+	tilemapImage *ebiten.Image
 }
 
 func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, shape *box2d.B2PolygonShape, image *ebiten.Image) (bod *box2d.B2Body) {
@@ -90,6 +94,19 @@ func NewGame() *Game {
 	fixtureDef.Restitution = 0.0
 	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
 
+	tilemapJson, err := NewTilemapJSON("assets/level1tilemap.tmj")
+	game.tilemapJson = *tilemapJson
+
+	if err != nil {
+		log.Fatal("Could not load tilemap json")
+	}
+
+	tilemapImg, _, err := ebitenutil.NewImageFromFile("assets/images/TilesetFloor.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	game.tilemapImage = tilemapImg
+
 	game.player = player
 	game.player2 = player2
 
@@ -121,17 +138,46 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 
+	screen.Fill(color.RGBA{60, 100, 150, 255})
+
 	op := ebiten.DrawImageOptions{}
+
+	for _, layer := range g.tilemapJson.Layers {
+		for index, id := range layer.Data {
+
+			x := index % layer.Width
+			y := index / layer.Width
+
+			x *= 16
+			y *= 16
+
+			srcX := (id - 1) % 22
+			srcY := (id - 1) / 22
+
+			srcX *= 16
+			srcY *= 16
+
+			op.GeoM.Translate(float64(x), float64(y))
+
+			screen.DrawImage(
+				g.tilemapImage.SubImage(image.Rect(srcX, srcY, srcX+16, srcY+16)).(*ebiten.Image),
+				&op,
+			)
+
+			op.GeoM.Reset()
+		}
+	}
+
+	op.GeoM.Reset()
 
 	pos := g.player.body.GetPosition()
 	op.GeoM.Translate(pos.X, pos.Y)
 	screen.DrawImage(&g.player.sprite, &op)
 
-	op2 := ebiten.DrawImageOptions{}
-
+	op.GeoM.Reset()
 	pos2 := g.player2.body.GetPosition()
-	op2.GeoM.Translate(pos2.X, pos2.Y)
-	screen.DrawImage(&g.player2.sprite, &op2)
+	op.GeoM.Translate(pos2.X, pos2.Y)
+	screen.DrawImage(&g.player2.sprite, &op)
 
 	for _, element := range g.entities {
 
