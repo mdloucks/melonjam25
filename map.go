@@ -7,9 +7,28 @@ import (
 
 // data we want for one layer in our list of layers
 type TilemapLayerJSON struct {
-	Data   []int `json:"data"`
-	Width  int   `json:"width"`
-	Height int   `json:"height"`
+	Data    []int    `json:"data"`
+	Width   int      `json:"width"`
+	Height  int      `json:"height"`
+	Objects []Object `json:"objects,omitempty"`
+}
+
+type Object struct {
+	Height   int          `json:"height"`
+	Id       int          `json:"id"`
+	Name     string       `json:"name"`
+	Rotation int          `json:"rotation"`
+	Type     string       `json:"type"`
+	Visible  bool         `json:"visible"`
+	Width    int          `json:"width"`
+	X        int          `json:"x"`
+	Y        int          `json:"y"`
+	Polygon  []Coordinate `json:"polygon,omitempty"`
+}
+
+type Coordinate struct {
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 // all layers in a tilemap

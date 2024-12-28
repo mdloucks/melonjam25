@@ -8,7 +8,6 @@ import (
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -32,10 +31,10 @@ type Game struct {
 	tilemapImage *ebiten.Image
 }
 
-func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, shape *box2d.B2PolygonShape, image *ebiten.Image) (bod *box2d.B2Body) {
+func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, fixtureDef *box2d.B2FixtureDef, image *ebiten.Image) (bod *box2d.B2Body) {
 
 	bod = g.world.CreateBody(bodyDef)
-	bod.CreateFixture(shape, 0.0)
+	bod.CreateFixtureFromDef(fixtureDef)
 
 	entity := Entity{
 		name:    name,
@@ -94,21 +93,10 @@ func NewGame() *Game {
 	fixtureDef.Restitution = 0.0
 	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
 
-	tilemapJson, err := NewTilemapJSON("assets/level1tilemap.tmj")
-	game.tilemapJson = *tilemapJson
-
-	if err != nil {
-		log.Fatal("Could not load tilemap json")
-	}
-
-	tilemapImg, _, err := ebitenutil.NewImageFromFile("assets/images/TilesetFloor.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	game.tilemapImage = tilemapImg
-
 	game.player = player
 	game.player2 = player2
+
+	createMap(&game, &world)
 
 	return &game
 }
@@ -143,6 +131,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op := ebiten.DrawImageOptions{}
 
 	for _, layer := range g.tilemapJson.Layers {
+
 		for index, id := range layer.Data {
 
 			x := index % layer.Width
