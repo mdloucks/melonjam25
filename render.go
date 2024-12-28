@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-func RenderMap(screen *ebiten.Image, g *Game, op *ebiten.DrawImageOptions) {
+func RenderMap(xOffset int, yOffset int, screen *ebiten.Image, g *Game, op *ebiten.DrawImageOptions) {
 
 	for _, layer := range g.tilemapJson.Layers {
 
@@ -24,7 +24,7 @@ func RenderMap(screen *ebiten.Image, g *Game, op *ebiten.DrawImageOptions) {
 			srcX *= 16
 			srcY *= 16
 
-			op.GeoM.Translate(float64(x), float64(y))
+			op.GeoM.Translate(float64(x+xOffset), float64(y+yOffset))
 
 			screen.DrawImage(
 				g.tilemapImage.SubImage(image.Rect(srcX, srcY, srcX+16, srcY+16)).(*ebiten.Image),

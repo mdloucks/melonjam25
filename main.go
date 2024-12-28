@@ -75,7 +75,8 @@ func NewGame() *Game {
 	game.player = player
 	game.player2 = player2
 
-	createMap(&game, &world)
+	createMap(0, 0, &game, &world)
+	createMap(0, 200, &game, &world)
 
 	return &game
 }
@@ -105,7 +106,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	op := ebiten.DrawImageOptions{}
 
-	RenderMap(screen, g, &op)
+	RenderMap(0, 0, screen, g, &op)
+	RenderMap(0, 200, screen, g, &op)
 
 	op.GeoM.Reset()
 	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op)

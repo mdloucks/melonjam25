@@ -16,7 +16,7 @@ func CreateWorld() (box2d.B2World, []Entity) {
 	world := box2d.MakeB2World(gravity)
 
 	var entities []Entity
-	entities = append(entities, createGround(&world, 0.0, 400.0), createGround(&world, 0.0, 200.0))
+	// entities = append(entities, createGround(&world, 0.0, 400.0), createGround(&world, 0.0, 200.0))
 
 	return world, entities
 }
@@ -54,7 +54,7 @@ func createGround(world *box2d.B2World, x, y float64) Entity {
 	return entity
 }
 
-func createMap(game *Game, world *box2d.B2World) {
+func createMap(x int, y int, game *Game, world *box2d.B2World) {
 
 	tilemapJson, err := NewTilemapJSON("assets/level1tilemap.tmj")
 	game.tilemapJson = *tilemapJson
@@ -76,7 +76,7 @@ func createMap(game *Game, world *box2d.B2World) {
 	for _, layer := range game.tilemapJson.Layers {
 		for _, object := range layer.Objects {
 
-			objectBodyDef.Position.Set(float64(object.X), float64(object.Y))
+			objectBodyDef.Position.Set(float64(object.X+x), float64(object.Y+y))
 
 			if object.Polygon == nil {
 
@@ -116,7 +116,7 @@ func createMap(game *Game, world *box2d.B2World) {
 			// }
 
 			wallImage := ebiten.NewImage(1, 1)
-			wallImage.Fill(color.RGBA{100, 200, 30, 0})
+			wallImage.Fill(color.RGBA{0, 0, 0, 255})
 
 			wallBody := game.makeEntity("Wall", &objectBodyDef, &fixtureDef, wallImage)
 			fmt.Printf("Created new wall at %v %v\n", wallBody.GetPosition().X, wallBody.GetPosition().Y)
