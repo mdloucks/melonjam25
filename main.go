@@ -72,26 +72,10 @@ func NewGame() *Game {
 	player2Body := world.CreateBody(player2.bodyDef)
 	player2.body = player2Body
 
-	// Attach a shape to the player body
-	shape := box2d.MakeB2PolygonShape()
-	shape.SetAsBox(0.5, 0.5) // A box with width=2 and height=2
+	// player fixture
 
-	w, h := 64.0, 64.0
-	vertices := []box2d.B2Vec2{
-		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, h), // top-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(0, h), // top-left corner (relative to the body's position)
-	}
-
-	shape.Set(vertices, len(vertices))
-
-	fixtureDef := box2d.MakeB2FixtureDef()
-	fixtureDef.Shape = &shape
-	fixtureDef.Density = 0.1
-	fixtureDef.Friction = 0.3
-	fixtureDef.Restitution = 0.0
-	playerBody.CreateFixtureFromDef(&fixtureDef) // Create player
+	playerBody.CreateFixtureFromDef(PlayerFixture()) // Create player
+	player2Body.CreateFixtureFromDef(PlayerFixture())
 
 	tilemapJson, err := NewTilemapJSON("assets/level1tilemap.tmj")
 	game.tilemapJson = *tilemapJson
@@ -116,7 +100,7 @@ func (g *Game) Update() error {
 	if g.player == nil || g.player2 == nil {
 		log.Fatal(nil)
 	}
-	if g.player.active {
+	if g.player.isActive {
 		HandleInput(g.player)
 	} else {
 		HandleInput(g.player2)
