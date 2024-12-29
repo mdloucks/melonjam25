@@ -20,17 +20,6 @@ type Player struct {
 	hitPoints     int
 }
 
-const (
-	jumpHeight   = -50000
-	playerWidth  = 16
-	playerHeight = 16
-	maxSpeed     = 20.0
-	maxJump      = 100.0
-	moveForce    = 50.0
-	hitPoints    = 10
-	lowestPoint  = 480
-)
-
 func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
@@ -64,6 +53,11 @@ func (p *Player) Die(reason string) {
 	// Return to Menu
 	fmt.Print(p.name, "Has Died! ", reason, "\n")
 	p.hitPoints = hitPoints
+	// Could just make it so they can't move
+	// would need to disable swap, SPACE
+	// p.body.SetGravityScale(0.0)
+	// p.body.DestroyFixture(p.body.GetFixtureList())
+
 }
 func (p *Player) CalculateDamage(damage int) {
 	fmt.Print(p.name, " lost ", damage, "hp\n")
