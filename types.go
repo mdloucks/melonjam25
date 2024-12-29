@@ -1,6 +1,7 @@
 package main
 
 import (
+	"pod/melonjam/animations"
 	"pod/melonjam/assets"
 
 	"github.com/ByteArena/box2d"
@@ -8,10 +9,11 @@ import (
 )
 
 type Entity struct {
-	name    string
-	bodyDef *box2d.B2BodyDef
-	body    *box2d.B2Body
-	sprite  ebiten.Image
+	name        string
+	bodyDef     *box2d.B2BodyDef
+	body        *box2d.B2Body
+	spriteSheet *assets.SpriteSheet
+	sprite      *ebiten.Image
 }
 
 type Character struct {
@@ -21,15 +23,16 @@ type Character struct {
 type GameState int
 
 type Game struct {
-	world             *box2d.B2World
-	player            *Player
-	playerSpriteSheet *assets.SpriteSheet
-	player2           *Player
-	entities          []Entity
-	tilemapJson       TilemapJSON
-	tilemapImage      *ebiten.Image
-	cam               Camera
-	state             GameState
+	world               *box2d.B2World
+	player              *Player
+	playerSpriteSheet   *assets.SpriteSheet
+	playerIdleAnimation *animations.Animation
+	player2             *Player
+	entities            []Entity
+	tilemapJson         TilemapJSON
+	tilemapImage        *ebiten.Image
+	cam                 Camera
+	state               GameState
 }
 
 type Camera struct {

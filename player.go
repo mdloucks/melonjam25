@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"math"
+	"pod/melonjam/assets"
 
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -11,7 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
+func NewPlayer(spritePath string, x float64, y float64, name string, active bool, playerSpriteSheet *assets.SpriteSheet) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
 
@@ -27,10 +28,11 @@ func NewPlayer(spritePath string, x float64, y float64, name string, active bool
 
 	return &Player{
 		&Entity{
-			name:    name,
-			bodyDef: &bodyDef,
-			body:    nil,
-			sprite:  *img,
+			name:        name,
+			bodyDef:     &bodyDef,
+			body:        nil,
+			spriteSheet: playerSpriteSheet,
+			sprite:      img,
 		},
 		false,
 		active,
@@ -108,7 +110,7 @@ func (p *Player) jump() {
 func PlayerFixture() *box2d.B2FixtureDef {
 	shape := box2d.MakeB2PolygonShape()
 
-	w, h := 16.0, 16.0
+	w, h := 64.0, 64.0
 	vertices := []box2d.B2Vec2{
 		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
 		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
@@ -161,11 +163,12 @@ func HandleInput(p *Player) {
 }
 
 func DefaultPlayer() *Player {
+	defaultSpriteSheet := assets.NewSpriteSheet(1, 1, 1)
 	defaultImg := ebiten.NewImage(playerWidth, playerHeight)
 	defaultImg.Fill(color.RGBA{G: 255, A: 255})
 
 	return &Player{
-		&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, *defaultImg},
+		&Entity{"", &box2d.B2BodyDef{}, &box2d.B2Body{}, defaultSpriteSheet, defaultImg},
 		false,
 		false,
 		*PlayerFixture(),

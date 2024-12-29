@@ -47,18 +47,18 @@ func RenderMap(xOffset int, yOffset int, screen *ebiten.Image, g *Game, op *ebit
 }
 
 // Render an entity fit to a given size, considering the camera
-func RenderSizedEntity(desiredW int, desiredH int, screen *ebiten.Image, entity *Entity, op *ebiten.DrawImageOptions, cam *Camera) {
-	w, h := entity.sprite.Bounds().Dx(), entity.sprite.Bounds().Dy()
+func RenderSizedEntity(desiredW int, desiredH int, screen *ebiten.Image, entity *Entity, op *ebiten.DrawImageOptions, cam *Camera, frame int) {
+	w, h := 64, entity.sprite.Bounds().Dy()
 	scaleX := (float64(desiredW) / float64(w)) * cam.zoom
 	scaleY := (float64(desiredH) / float64(h)) * cam.zoom
 
 	// Apply scaling
 	op.GeoM.Scale(scaleX, scaleY)
-	RenderEntity(screen, entity, op, cam)
+	RenderEntity(screen, entity, op, cam, frame)
 }
 
 // Render an entity considering the camera
-func RenderEntity(screen *ebiten.Image, entity *Entity, op *ebiten.DrawImageOptions, cam *Camera) {
+func RenderEntity(screen *ebiten.Image, entity *Entity, op *ebiten.DrawImageOptions, cam *Camera, frame int) {
 	pos := entity.body.GetPosition()
 
 	// Adjust position based on the camera
@@ -67,5 +67,9 @@ func RenderEntity(screen *ebiten.Image, entity *Entity, op *ebiten.DrawImageOpti
 
 	// Apply translation
 	op.GeoM.Translate(worldX, worldY)
-	screen.DrawImage(&entity.sprite, op)
+	currentImage := entity.spriteSheet
+	if currentImage == nil {
+		currentImage = DefaultPlayer().spriteSheet
+	}
+	screen.DrawImage(entity.sprite.SubImage(currentImage.Rect(frame)).(*ebiten.Image), op)
 }

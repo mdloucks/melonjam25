@@ -18,8 +18,8 @@ const (
 // Player Constants
 const (
 	jumpHeight   = -50000
-	playerWidth  = 16
-	playerHeight = 16
+	playerWidth  = 64
+	playerHeight = 64
 	maxSpeed     = 20.0
 	maxJump      = 100.0
 	moveForce    = 50.0

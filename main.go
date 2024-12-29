@@ -16,7 +16,7 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, fixtureDef *box
 		name:    name,
 		bodyDef: bodyDef,
 		body:    bod,
-		sprite:  *image,
+		sprite:  image,
 	}
 
 	g.entities = append(g.entities, entity)
@@ -25,6 +25,7 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, fixtureDef *box
 }
 
 func (g *Game) Update() error {
+
 	switch g.state {
 	case StateMenu, StateDeath:
 		HandleMenu(g)

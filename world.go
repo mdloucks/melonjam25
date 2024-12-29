@@ -49,7 +49,7 @@ func createGround(world *box2d.B2World, x, y float64) Entity {
 		name:    "Ground",
 		bodyDef: &groundDef,
 		body:    groundBody,
-		sprite:  *groundImage}
+		sprite:  groundImage}
 
 	return entity
 }

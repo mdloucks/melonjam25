@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"pod/melonjam/animations"
+	"pod/melonjam/assets"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -14,6 +16,7 @@ import (
 
 func HandleGameplay(g *Game) error {
 	g.cam.x = int(g.player.body.GetPosition().X - (screenWidth / 4))
+	g.playerIdleAnimation.Update()
 	// g.cam.y = int(g.player.body.GetPosition().Y - screenHeight/2)
 
 	var players = []*Player{g.player, g.player2}
@@ -68,15 +71,15 @@ func DrawGame(screen *ebiten.Image, g *Game) {
 	RenderMap(0, 200, screen, g, &op, &g.cam)
 
 	op.GeoM.Reset()
-	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op, &g.cam)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player.Entity, &op, &g.cam, g.playerIdleAnimation.Frame())
 
 	op.GeoM.Reset()
-	RenderSizedEntity(playerWidth, playerHeight, screen, g.player2.Entity, &op, &g.cam)
+	RenderSizedEntity(playerWidth, playerHeight, screen, g.player2.Entity, &op, &g.cam, g.playerIdleAnimation.Frame())
 
 	op.GeoM.Reset()
 
 	for _, element := range g.entities {
-		RenderEntity(screen, &element, &op, &g.cam)
+		RenderEntity(screen, &element, &op, &g.cam, g.playerIdleAnimation.Frame())
 		op.GeoM.Reset()
 	}
 
@@ -93,19 +96,22 @@ func DrawMenu(screen *ebiten.Image, g *Game, topText string, bottomText string) 
 }
 
 func NewGame() *Game {
-	// playerSpriteSheet := assets.NewSpriteSheet(8, 1, 64)
+	playerSpriteSheet := assets.NewSpriteSheet(8, 1, 64)
+	playerIdleAnimation := animations.NewAnimation(0, 7, 1, 20.0)
 	game := Game{}
 	// init in the menu
 	game.state = StateMenu
+	game.playerSpriteSheet = playerSpriteSheet
+	game.playerIdleAnimation = playerIdleAnimation
 
 	world, entities := CreateWorld()
 	game.world = &world
 
 	game.entities = append(game.entities, entities...)
 
-	player, err := NewPlayer("assets/img/GreenMan.png", 100, 300, "dark", true)
+	player, err := NewPlayer("assets/img/GreenManIdle.png", 100, 300, "dark", true, playerSpriteSheet)
 
-	player2, err2 := NewPlayer("assets/img/GreenMan.png", 100, 150, "light", false)
+	player2, err2 := NewPlayer("assets/img/GreenManIdle.png", 100, 150, "light", false, playerSpriteSheet)
 
 	if err != nil || err2 != nil {
 		fmt.Println("Could not create player!")
