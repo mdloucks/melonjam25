@@ -17,6 +17,7 @@ type Player struct {
 	isActive      bool
 	fixture       box2d.B2FixtureDef
 	hasDoubleJump bool
+	hitPoints     int
 }
 
 const (
@@ -26,6 +27,8 @@ const (
 	maxSpeed     = 20.0
 	maxJump      = 100.0
 	moveForce    = 50.0
+	hitPoints    = 10
+	lowestPoint  = 480
 )
 
 func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
@@ -53,7 +56,33 @@ func NewPlayer(spritePath string, x float64, y float64, name string, active bool
 		active,
 		*PlayerFixture(),
 		false,
+		hitPoints,
 	}, nil
+}
+
+func (p *Player) Die(reason string) {
+	// Return to Menu
+	fmt.Print(p.name, "Has Died! ", reason, "\n")
+	p.hitPoints = hitPoints
+}
+func (p *Player) CalculateDamage(damage int) {
+	fmt.Print(p.name, " lost ", damage, "hp\n")
+	if damage > 0 {
+		p.hitPoints = p.hitPoints - damage
+	}
+	p.HealthCheck()
+
+}
+func (p *Player) HealthCheck() {
+	if p.hitPoints <= 0 {
+		p.Die("lost too much hp, git gud")
+	}
+}
+func (p *Player) HeightCheck() {
+	// Y axis is inverted, so down is positive Y
+	if p.body.GetPosition().Y >= lowestPoint {
+		p.Die("you fell off the map, sucks to suck")
+	}
 }
 
 func (p *Player) swap() {
@@ -153,6 +182,7 @@ func DefaultPlayer() *Player {
 		false,
 		*PlayerFixture(),
 		true,
+		hitPoints,
 	}
 
 }

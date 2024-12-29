@@ -100,6 +100,8 @@ func (g *Game) Update() error {
 	g.cam.x = int(g.player.body.GetPosition().X - (screenWidth / 2))
 	// g.cam.y = int(g.player.body.GetPosition().Y - screenHeight/2)
 
+	var players = []*Player{g.player, g.player2}
+
 	if g.player == nil || g.player2 == nil {
 		log.Fatal(nil)
 	}
@@ -111,6 +113,15 @@ func (g *Game) Update() error {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		g.player.swap()
 		g.player2.swap()
+	}
+
+	// Damage check
+	// Simulate Damage
+	// g.player.CalculateDamage(1)
+
+	for _, element := range players {
+		element.HealthCheck()
+		element.HeightCheck()
 	}
 
 	g.world.Step(timeStep, velocityIterations, positionIterations)
