@@ -13,7 +13,7 @@ import (
 )
 
 func HandleGameplay(g *Game) error {
-	g.cam.x = int(g.player.body.GetPosition().X - (screenWidth / 2))
+	g.cam.x = int(g.player.body.GetPosition().X - (screenWidth / 4))
 	// g.cam.y = int(g.player.body.GetPosition().Y - screenHeight/2)
 
 	var players = []*Player{g.player, g.player2}
@@ -93,6 +93,7 @@ func DrawMenu(screen *ebiten.Image, g *Game, topText string, bottomText string) 
 }
 
 func NewGame() *Game {
+	// playerSpriteSheet := assets.NewSpriteSheet(8, 1, 64)
 	game := Game{}
 	// init in the menu
 	game.state = StateMenu
@@ -128,8 +129,8 @@ func NewGame() *Game {
 
 	cam := Camera{
 		x:    int(player.body.GetPosition().X),
-		y:    0,
-		zoom: 1,
+		y:    80,
+		zoom: 2.0,
 	}
 
 	game.cam = cam

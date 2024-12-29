@@ -2,8 +2,8 @@ package main
 
 // Game Constants
 const (
-	screenWidth                  = 640
-	screenHeight                 = 480
+	screenWidth                  = 1080
+	screenHeight                 = 720
 	timeStep                     = 1.0 / 60.0
 	velocityIterations           = 6
 	positionIterations           = 2

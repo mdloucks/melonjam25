@@ -1,6 +1,8 @@
 package main
 
 import (
+	"pod/melonjam/assets"
+
 	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -19,14 +21,15 @@ type Character struct {
 type GameState int
 
 type Game struct {
-	world        *box2d.B2World
-	player       *Player
-	player2      *Player
-	entities     []Entity
-	tilemapJson  TilemapJSON
-	tilemapImage *ebiten.Image
-	cam          Camera
-	state        GameState
+	world             *box2d.B2World
+	player            *Player
+	playerSpriteSheet *assets.SpriteSheet
+	player2           *Player
+	entities          []Entity
+	tilemapJson       TilemapJSON
+	tilemapImage      *ebiten.Image
+	cam               Camera
+	state             GameState
 }
 
 type Camera struct {
