@@ -11,15 +11,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-type Player struct {
-	*Entity
-	isGrounded    bool
-	isActive      bool
-	fixture       box2d.B2FixtureDef
-	hasDoubleJump bool
-	hitPoints     int
-}
-
 func NewPlayer(spritePath string, x float64, y float64, name string, active bool) (*Player, error) {
 
 	img, _, err := ebitenutil.NewImageFromFile(spritePath)
@@ -64,19 +55,22 @@ func (p *Player) CalculateDamage(damage int) {
 	if damage > 0 {
 		p.hitPoints = p.hitPoints - damage
 	}
-	p.HealthCheck()
 
 }
-func (p *Player) HealthCheck() {
+func (p *Player) HealthCheck() bool {
 	if p.hitPoints <= 0 {
 		p.Die("lost too much hp, git gud")
+		return true
 	}
+	return false
 }
-func (p *Player) HeightCheck() {
+func (p *Player) HeightCheck() bool {
 	// Y axis is inverted, so down is positive Y
 	if p.body.GetPosition().Y >= lowestPoint {
 		p.Die("you fell off the map, sucks to suck")
+		return true
 	}
+	return false
 }
 
 func (p *Player) swap() {

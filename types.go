@@ -34,3 +34,12 @@ type Camera struct {
 	x    int
 	y    int
 }
+
+type Player struct {
+	*Entity
+	isGrounded    bool
+	isActive      bool
+	fixture       box2d.B2FixtureDef
+	hasDoubleJump bool
+	hitPoints     int
+}

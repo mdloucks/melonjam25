@@ -26,7 +26,7 @@ func (g *Game) makeEntity(name string, bodyDef *box2d.B2BodyDef, fixtureDef *box
 
 func (g *Game) Update() error {
 	switch g.state {
-	case StateMenu:
+	case StateMenu, StateDeath:
 		HandleMenu(g)
 	case StatePlaying:
 		HandleGameplay(g)
@@ -37,9 +37,11 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.state {
 	case StateMenu:
-		DrawMenu(screen, g)
+		DrawMenu(screen, g, "BOX2D SUCKS", "Start Game!")
 	case StatePlaying:
 		DrawGame(screen, g)
+	case StateDeath:
+		DrawMenu(screen, g, "YOU DIED!", "Try Again!")
 	}
 
 }

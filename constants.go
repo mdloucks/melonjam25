@@ -12,6 +12,7 @@ const (
 	moveSpeed                    = 100 * pixlesPerMeter
 	StateMenu          GameState = iota
 	StatePlaying
+	StateDeath
 )
 
 // Player Constants

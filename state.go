@@ -36,8 +36,9 @@ func HandleGameplay(g *Game) error {
 	// g.player.CalculateDamage(1)
 
 	for _, element := range players {
-		element.HealthCheck()
-		element.HeightCheck()
+		if element.HealthCheck() || element.HeightCheck() {
+			g.state = StateDeath
+		}
 	}
 
 	g.world.Step(timeStep, velocityIterations, positionIterations)
@@ -46,6 +47,7 @@ func HandleGameplay(g *Game) error {
 
 }
 
+// Used for Death too
 func HandleMenu(g *Game) error {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
@@ -79,15 +81,15 @@ func DrawGame(screen *ebiten.Image, g *Game) {
 	}
 
 }
-func DrawMenu(screen *ebiten.Image, g *Game) {
+func DrawMenu(screen *ebiten.Image, g *Game, topText string, bottomText string) {
 
 	screen.Fill(color.Black)
 
 	face := basicfont.Face7x13
-	text.Draw(screen, "My Game", face, 340, 150, color.White)
+	text.Draw(screen, topText, face, 340, 150, color.White)
 
 	vector.DrawFilledRect(screen, 300, 250, 200, 50, color.RGBA{R: 0, G: 255, B: 0, A: 255}, false) // Green button
-	text.Draw(screen, "Start Game", face, 335, 280, color.Black)
+	text.Draw(screen, bottomText, face, 335, 280, color.Black)
 }
 
 func NewGame() *Game {
