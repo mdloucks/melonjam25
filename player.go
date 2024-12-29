@@ -121,7 +121,7 @@ func PlayerFixture() *box2d.B2FixtureDef {
 
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
-	fixtureDef.Density = 0.1
+	fixtureDef.Density = 1.0
 	fixtureDef.Friction = 0.5
 	fixtureDef.Restitution = 0.0
 

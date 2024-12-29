@@ -7,6 +7,7 @@ import (
 	"pod/melonjam/animations"
 	"pod/melonjam/assets"
 
+	"github.com/ByteArena/box2d"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text"
