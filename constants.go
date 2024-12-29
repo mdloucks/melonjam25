@@ -21,8 +21,8 @@ const (
 	playerWidth  = 64
 	playerHeight = 64
 	maxSpeed     = 20.0
-	maxJump      = 100.0
-	moveForce    = 50.0
+	maxJump      = 100.0 * pixlesPerMeter
+	moveForce    = 50.0 * pixlesPerMeter
 	hitPoints    = 10
 	lowestPoint  = 480
 )

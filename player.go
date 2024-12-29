@@ -110,12 +110,11 @@ func (p *Player) jump() {
 func PlayerFixture() *box2d.B2FixtureDef {
 	shape := box2d.MakeB2PolygonShape()
 
-	w, h := 64.0, 64.0
 	vertices := []box2d.B2Vec2{
-		box2d.MakeB2Vec2(0, 0), // bottom-left corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, 0), // bottom-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(w, h), // top-right corner (relative to the body's position)
-		box2d.MakeB2Vec2(0, h), // top-left corner (relative to the body's position)
+		box2d.MakeB2Vec2(0, 0),                      // bottom-left corner (relative to the body's position)
+		box2d.MakeB2Vec2(playerWidth, 0),            // bottom-right corner (relative to the body's position)
+		box2d.MakeB2Vec2(playerWidth, playerHeight), // top-right corner (relative to the body's position)
+		box2d.MakeB2Vec2(0, playerHeight),           // top-left corner (relative to the body's position)
 	}
 
 	shape.Set(vertices, len(vertices))
@@ -123,7 +122,7 @@ func PlayerFixture() *box2d.B2FixtureDef {
 	fixtureDef := box2d.MakeB2FixtureDef()
 	fixtureDef.Shape = &shape
 	fixtureDef.Density = 0.1
-	fixtureDef.Friction = 0.3
+	fixtureDef.Friction = 0.5
 	fixtureDef.Restitution = 0.0
 
 	return &fixtureDef
@@ -141,6 +140,7 @@ func HandleInput(p *Player) {
 	} else if l && r {
 		p.body.SetLinearVelocity(box2d.MakeB2Vec2(0, currentVelocity.Y))
 	}
+
 	// Max Speed
 	if math.Abs(currentVelocity.X) > maxSpeed {
 		currentVelocity.X = math.Copysign(maxSpeed, currentVelocity.X)
